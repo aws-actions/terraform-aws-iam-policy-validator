@@ -1,6 +1,6 @@
-# Policy Validator for AWS IAM Policies in CloudFormation Templates
+# Policy Validator for AWS IAM Policies in Terraform Templates
 
-A GitHub Action that takes an [AWS CloudFormation](https://aws.amazon.com/cloudformation/) template, parses the IAM policies attached to IAM roles, users, groups, and resources then runs them through IAM Access Analyzer [policy validation](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-policy-validation.html) and (optionally) [custom policy checks](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-custom-policy-checks.html). Note that a charge is associated with each custom policy check. For more details about pricing, see [IAM Access Analyzer pricing](https://aws.amazon.com/iam/access-analyzer/pricing/).
+A GitHub Action that takes an Terraform template, parses the IAM policies attached to IAM roles, users, groups, and resources then runs them through IAM Access Analyzer [policy validation](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-policy-validation.html) and (optionally) [custom policy checks](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-custom-policy-checks.html). Note that a charge is associated with each custom policy check. For more details about pricing, see [IAM Access Analyzer pricing](https://aws.amazon.com/iam/access-analyzer/pricing/).
 
 ## Inputs
 
@@ -152,7 +152,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run VALIDATE_POLICY Check
         id: run-validate-policy
-        uses: aws-actions/terraform-aws-iam-policy-validator-tf@v1
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1
         with:
           policy-check-type: 'VALIDATE_POLICY'
           template-path: file-path-to-the-cfn-templates
@@ -165,7 +165,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run CHECK_NO_NEW_ACCESS check
         id: run-check-no-new-access
-        uses: aws-actions/terraform-aws-iam-policy-validator-tf@v1
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1
         with:
           policy-check-type: 'CHECK_NO_NEW_ACCESS'
           template-path: file-path-to-the-cfn-templates
@@ -179,7 +179,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run CHECK_ACCESS_NOT_GRANTED check
         id: run-check-no-new-access
-        uses: aws-actions/terraform-aws-iam-policy-validator-tf@v1
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1
         with:
           policy-check-type: 'CHECK_ACCESS_NOT_GRANTED'
           template-path: file-path-to-the-cfn-templates
