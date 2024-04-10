@@ -1,0 +1,53 @@
+name: 'Policy checks to validate AWS IAM policies in Terraform templates" Action For GitHub Actions'
+description: "Uses ValidatePolicy, CheckAccessNotGranted, CheckNoNewAccess APIs from AWS Access Analyzer for policy checks - https://docs.aws.amazon.com/access-analyzer/latest/APIReference/"
+branding:
+  icon: "cloud"
+  color: "orange"
+inputs:
+  policy-check-type:
+    description: "Type of the policy check. Valid values: VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED"
+    required: true
+  template-path:
+    description: "The path to the Terraform plan file (JSON)."
+    required: true
+  region:
+    description: "The destination region the resources will be deployed to."
+    required: true
+  ignore-finding:
+    description: 'Allow validation failures to be ignored. Specify as a comma separated list of findings to be ignored. Can be individual finding codes (e.g. "PASS_ROLE_WITH_STAR_IN_RESOURCE"), a specific resource name (e.g. "MyResource"), or a combination of both separated by a period.(e.g. "MyResource.PASS_ROLE_WITH_STAR_IN_RESOURCE"). Names of finding codes may change in IAM Access Analyzer over time. Valid options: FINDING_CODE,RESOURCE_NAME,RESOURCE_NAME.FINDING_CODE'
+  actions:
+    description: 'List of comma-separated actions. Example format - ACTION,ACTION,ACTION. This attribute is considered and required when policy-check-type is "CHECK_ACCESS_NOT_GRANTED"'
+  reference-policy:
+    description: 'A JSON formatted file that specifies the path to the reference policy that is used for a permissions comparison. This attribute is considered and required when policy-check-type is "CHECK_NO_NEW_ACCESS"'
+  reference-policy-type:
+    description: 'The policy type associated with the IAM policy under analysis and the reference policy. Valid values: IDENTITY, RESOURCE. This attribute is considered and required when policy-check-type is "CHECK_NO_NEW_ACCESS"'
+  treat-finding-type-as-blocking:
+    description: 'Specify which finding types should be treated as blocking. Other finding types are treated as non blocking. If the tool detects any blocking finding types, it will exit with a non-zero exit code. If all findings are non blocking or there are no findings, the tool exits with an exit code of 0. Defaults to "ERROR" and "SECURITY_WARNING". Specify as a comma separated list of finding types that should be blocking. Pass "NONE" to ignore all findings. This attribute is considered only when policy-check-type is "VALIDATE_POLICY"'
+  treat-findings-as-non-blocking:
+    description: 'When not specified, the tool detects any findings, it will exit with a non-zero exit code. When specified, the tool exits with an exit code of 0. This attribute is considered only when policy-check-type is "CHECK_NO_NEW_ACCESS" or "CHECK_ACCESS_NOT_GRANTED"'
+    default: "False"
+  allow-external-principals:
+    description: 'A comma separated list of external principals that should be ignored. Specify as a comma separated list of a 12 digit AWS account ID, a federated web identity user, a federated SAML user, or an ARN. Specify \"*\" to allow anonymous access. (e.g. 123456789123,arn:aws:iam::111111111111:role/MyOtherRole,graph.facebook.com). Valid options: ACCOUNT,ARN". This attribute is considered only when policy-check-type is "VALIDATE_POLICY"'
+  allow-dynamic-ref-without-version:
+    description: "Override the default behavior and allow dynamic SSM references without version numbers. The version number ensures that the SSM parameter value that was validated is the one that is deployed."
+  exclude-resource-types:
+    description: "List of comma-separated resource types. Resource types should be the same as Cloudformation template resource names such as AWS::IAM::Role, AWS::S3::Bucket. Valid option syntax: AWS::SERVICE::RESOURCE"
+outputs:
+  result:
+    description: "Result of the policy checks"
+runs:
+  using: "docker"
+  image: Dockerfile
+  args:
+    - ${{ inputs.policy-check-type}}
+    - ${{ inputs.template-path }}
+    - ${{ inputs.region }}
+    - ${{ inputs.ignore-finding }}
+    - ${{ inputs.actions }}
+    - ${{ inputs.reference-policy }}
+    - ${{ inputs.reference-policy-type }}
+    - ${{ inputs.treat-finding-type-as-blocking }}
+    - ${{ inputs.treat-findings-as-non-blocking }}
+    - ${{ inputs.allow-external-principals }}
+    - ${{ inputs.allow-dynamic-ref-without-version }}
+    - ${{ inputs.exclude-resource-types }}
