@@ -10,10 +10,10 @@ See [action.yml](action.yaml) for the full documentation for this action's input
    <table title="Sheet4">
       <tbody>
          <tr>
-            <td>Inputs</td>
-            <td>Description</td>
-            <td>Options</td>
-            <td>Required</td>
+            <td rowspan="2">Inputs</td>
+            <td rowspan="2">Description</td>
+            <td rowspan="2">Options</td>
+            <td rowspan="2">Required</td>
             <td colspan="3">Applies To which policy-check-type</td>
          </tr>
          <tr>
