@@ -10,20 +10,20 @@ See [action.yml](action.yaml) for the full documentation for this action's input
    <table title="Sheet4">
       <tbody>
          <tr>
-            <td rowspan="2">Inputs</td>
-            <td rowspan="2">Description</td>
-            <td rowspan="2">Options</td>
-            <td rowspan="2">Required</td>
-            <td colspan="3">Applies To which policy-check-type</td>
+            <th rowspan="2" style="text-align: center;">Inputs</th>
+            <th rowspan="2" style="text-align: center;">Description</th>
+            <th rowspan="2" style="text-align: center;">Options</th>
+            <th rowspan="2" style="text-align: center;">Required</th>
+            <th colspan="3" style="text-align: center;">Applies To which policy-check-type</th>
          </tr>
          <tr>
-            <td>VALIDATE_POLICY</td>
-            <td>CHECK_NO_NEW_ACCESS</td>
-            <td>CHECK_ACCESS_NOT_GRANTED</td>
+            <th style="text-align: center;">VALIDATE_POLICY</th>
+            <th style="text-align: center;">CHECK_NO_NEW_ACCESS</th>
+            <th style="text-align: center;">CHECK_ACCESS_NOT_GRANTED</th>
          </tr>
          <tr>
             <td>policy-check-type</td>
-            <td>Name of the policy check.<br />Note: Each value correponds to an IAM Access Analyzer API. <br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ValidatePolicy.html">ValidatePolicy</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoNewAccess.html">CheckNoNewAccess</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckAccessNotGranted.html">CheckAccessNotGranted</a></td>
+            <td>Name of the policy check.<br />Note: Each value corresponds to an IAM Access Analyzer API. <br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ValidatePolicy.html">ValidatePolicy</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoNewAccess.html">CheckNoNewAccess</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckAccessNotGranted.html">CheckAccessNotGranted</a></td>
             <td>VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED.</td>
             <td>Yes</td>
             <td>✅</td>
@@ -134,7 +134,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 **Before each of the following examples, make sure to include the following:**
 
 - Setting up the role: Role used in the GitHub workflow should have necessary permissions required
-  - to be called from the GitHub workflows, refer [this](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/) for more details
+  - to be called from the GitHub workflows - setup OpenID Connect(OIDC) provider and IAM role & Trust policy as described in step 1 & 2 in [this](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/) blog
   - to call the AWS APIs for the policy checks - ValidatePolicy, CheckNoNewAccess, CheckAccessNotGranted. Refer [this](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-checks-validating-policies.html) page for more details
 
 ```
@@ -143,7 +143,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.POLICY_VALIDATOR_ROLE }} # Role with permissions to invoke access-analyzer:validate-policy,access-analyzer:check-no-new-access, access-analyzer:check-access-not-granted
+          role-to-assume: ${{ secrets.POLICY_VALIDATOR_ROLE }} # Role with permissions to invoke access-analyzer:ValidatePolicy,access-analyzer:CheckNoNewAccess, access-analyzer:CheckAccessNotGranted
           aws-region: aws-example-region
 ```
 
