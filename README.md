@@ -152,7 +152,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run VALIDATE_POLICY Check
         id: run-validate-policy
-        uses: aws-actions/terraform-aws-iam-policy-validator@v1
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.0
         with:
           policy-check-type: 'VALIDATE_POLICY'
           template-path: file-path-to-the-cfn-templates
@@ -165,7 +165,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run CHECK_NO_NEW_ACCESS check
         id: run-check-no-new-access
-        uses: aws-actions/terraform-aws-iam-policy-validator@v1
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.0
         with:
           policy-check-type: 'CHECK_NO_NEW_ACCESS'
           template-path: file-path-to-the-cfn-templates
@@ -179,7 +179,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run CHECK_ACCESS_NOT_GRANTED check
         id: run-check-no-new-access
-        uses: aws-actions/terraform-aws-iam-policy-validator@v1
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.0
         with:
           policy-check-type: 'CHECK_ACCESS_NOT_GRANTED'
           template-path: file-path-to-the-cfn-templates
