@@ -189,6 +189,10 @@ def execute_command(command):
                 err.returncode, err.with_traceback, err.output
             )
         )
+
+        if err.returncode == 2:
+            return err.output
+
         raise
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
