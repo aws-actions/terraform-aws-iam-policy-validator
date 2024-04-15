@@ -1,5 +1,5 @@
 name: 'Policy checks to validate AWS IAM policies in Terraform templates" Action For GitHub Actions'
-description: "Uses ValidatePolicy, CheckAccessNotGranted, CheckNoNewAccess APIs from AWS Access Analyzer for policy checks - https://docs.aws.amazon.com/access-analyzer/latest/APIReference/"
+description: "Validate IAM Policies in TF templates using ValidatePolicy, CheckAccessNotGranted & CheckNoNewAccess API in Access Analyzer"
 branding:
   icon: "cloud"
   color: "orange"
