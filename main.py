@@ -68,8 +68,7 @@ def main():
         ["--config", get_config()]
     )  # Config is required for handling terraform templates
     result = execute_command(command_lst)
-    formatted_result = format_result(result)
-    set_github_action_output(ACTION_OUTPUT_RESULT, formatted_result)
+    set_output(result)
     return
 
 
@@ -189,14 +188,18 @@ def execute_command(command):
                 err.returncode, err.with_traceback, err.output
             )
         )
-
         if err.returncode == 2:
-            return err.output
-
+            set_output(err.output)
         raise
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         raise
+
+
+def set_output(val):
+    formatted_result = format_result(val)
+    set_github_action_output(ACTION_OUTPUT_RESULT, formatted_result)
+    return
 
 
 def format_result(result):
