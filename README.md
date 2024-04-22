@@ -147,12 +147,26 @@ See [action.yml](action.yaml) for the full documentation for this action's input
           aws-region: aws-example-region
 ```
 
+#### Getting started using starter workflows 
+
+To get started quickly, add a starter workflow to the `.github/workflows` directory of your repository. In order to do that, do the following -
+
+- Navigate to `Actions` tab of the GitHub repository
+- Click on `New Workflow` button
+- Search for `Policy Validator for Terraform` in the search bar
+- Click on `Configure` button
+- Pass the appropriate inputs to the workflow and modify it accordingly
+- Click on `Commit changes` to commit your changes
+- Start using the GitHub actions!
+
+Please find the starter workflow [here](https://github.com/actions/starter-workflows/blob/main/code-scanning/policy-validator-tf.yaml)
+
 #### Using `VALIDATE_POLICY` CHECK
 
 ```
       - name: Run VALIDATE_POLICY Check
         id: run-validate-policy
-        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.0
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.1
         with:
           policy-check-type: 'VALIDATE_POLICY'
           template-path: file-path-to-the-cfn-templates
@@ -165,7 +179,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run CHECK_NO_NEW_ACCESS check
         id: run-check-no-new-access
-        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.0
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.1
         with:
           policy-check-type: 'CHECK_NO_NEW_ACCESS'
           template-path: file-path-to-the-cfn-templates
@@ -179,7 +193,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 ```
       - name: Run CHECK_ACCESS_NOT_GRANTED check
         id: run-check-no-new-access
-        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.0
+        uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.1
         with:
           policy-check-type: 'CHECK_ACCESS_NOT_GRANTED'
           template-path: file-path-to-the-cfn-templates
