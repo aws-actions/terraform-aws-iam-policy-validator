@@ -203,7 +203,7 @@ def set_output(val):
 
 
 def format_result(result):
-    result = re.sub(r"[\n\t\s]*", "", result)
+    result = re.sub(r"[\n\t]*|\s{2,}", "", result)
     print("result={}".format(result))
     return result
 
