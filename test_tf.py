@@ -11,17 +11,17 @@ from main import COMMON_REQUIRED_INPUTS, TREAT_FINDINGS_AS_NON_BLOCKING
 
 from unittest.mock import patch
 
+INVALID_POLICY_CHECK = "INVALID_POLICY_CHECK"
+
 class TfpvTest(unittest.TestCase):
     # case 1: test_get_type_ENVIRON_NOT_SET: failure expected because required os.environ[] are not set
-    @unittest.expectedFailure
     def test_get_type_ENVIRON_NOT_SET(self):
-        assertRaises(ValueError, get_policy_check_type)
+        self.assertRaises(KeyError, get_policy_check_type)
 
     # case 2: test_get_type_INVALID_POLICY_CHECK: failure expected because os.environ[] is set to an invalid value
-    @unittest.expectedFailure
     def test_get_type_INVALID_POLICY_CHECK(self):
         os.environ[POLICY_CHECK_TYPE] = INVALID_POLICY_CHECK
-        assertRaises(ValueError, get_policy_check_type)
+        self.assertRaises(ValueError, get_policy_check_type)
 
     # case 3, 4, 5: test_get_type_WITH_VALIDATE_POLICY: success with valid POLICY_CHECK_TYPE
     @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED])
@@ -33,8 +33,8 @@ class TfpvTest(unittest.TestCase):
     # case 6: test_get_required_input_INVALID_POLICY_CHECK: failure expected because an invalid policy_check_type is provided
     @unittest.expectedFailure
     def test_get_required_input_INVALID_POLICY_CHECK(self):
-        policy_check = "INVALID_POLICY_CHECK"
-        assert get_required_inputs(policy_check) is None
+        policy_check = INVALID_POLICY_CHECK
+        self.assertEqual(get_required_inputs(policy_check), "")
 
     # case 7, 8, 9: test_get_required_input_WITH_VALIDATE_POLICY: success as a valid POLICY_CHECK_TYPE is provided: VALIDATE_POLICY
     @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED])
@@ -67,10 +67,10 @@ class TfpvTest(unittest.TestCase):
             self.assertEqual(result, {"INPUT_IGNORE-FINDING",  "INPUT_ALLOW-DYNAMIC-REF-WITHOUT-VERSION",  "INPUT_EXCLUDE-RESOURCE-TYPES"})
 
     # case 14: test_get_sub_command_ENVIRON_NOT_SET: failure expected because required os.environ[]s are not set
-    @unittest.expectedFailure
     def test_get_sub_command_ENVIRON_NOT_SET(self):
-        required = {"INPUT_TEMPLATE-PATH",  "INPUT_REGION"}
-        assertRaises(ValueError, get_sub_command, required, True)
+        os.environ['INPUT_REGION'] = ''
+        required = ['INPUT_REGION']
+        self.assertRaises(ValueError, get_sub_command, required, True)
 
     # case 15: test_get_sub_command_MEET_REQUIRED_INPUTS: success as valid inputs are provided.
     def test_get_sub_command_MEET_REQUIRED_INPUTS(self):
@@ -83,10 +83,10 @@ class TfpvTest(unittest.TestCase):
         self.assertEqual(set(flags), set(expected))
 
     # case 16: test_get_treat_findings_as_non_blocking_flag_ENVIRON_NOT_SET: failure expected because os.environ[TREAT_FINDINGS_AS_NON_BLOCKING] is not set
-    @unittest.expectedFailure
     def test_get_treat_findings_as_non_blocking_flag_ENVIRON_NOT_SET(self):
+        os.environ[TREAT_FINDINGS_AS_NON_BLOCKING] = ''
         policy_check = CHECK_NO_NEW_ACCESS
-        assertRaises(ValueError, get_treat_findings_as_non_blocking_flag, policy_check)
+        self.assertRaises(ValueError, get_treat_findings_as_non_blocking_flag, policy_check)
         
     # case 17: test_get_treat_findings_as_non_blocking_flag_VALIDATE_POLICY: pass
     def test_get_treat_findings_as_non_blocking_flag_VALIDATE_POLICY(self):
