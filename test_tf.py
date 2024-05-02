@@ -74,7 +74,7 @@ class TfpvTest(unittest.TestCase):
 
     # case 15: test_get_sub_command_MEET_REQUIRED_INPUTS: success as valid inputs are provided.
     def test_get_sub_command_MEET_REQUIRED_INPUTS(self):
-        tft = os.getcwd() + './tf_validate.json'
+        tft = os.getcwd() + './main.py'
         os.environ['INPUT_TEMPLATE-PATH'] = tft
         os.environ['INPUT_REGION'] = 'us-west-2'
         required = {"INPUT_TEMPLATE-PATH",  "INPUT_REGION"}
@@ -111,7 +111,7 @@ class TfpvTest(unittest.TestCase):
     # case 20: test_build_command_VALIDATE_POLICY: pass with correct parameters.
     def test_build_command_VALIDATE_POLICY(self):
         policy_check = VALIDATE_POLICY
-        tft = os.getcwd() + './tf_validate.json'
+        tft = os.getcwd() + './main.py'
         os.environ['INPUT_TEMPLATE-PATH'] = tft 
         os.environ['INPUT_REGION'] = 'us-west-2'
         os.environ['TREAT_FINDINGS_AS_NON_BLOCKING'] = 'False'
