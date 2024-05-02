@@ -1,0 +1,24 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  unittest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Setup Python
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      # - name: Install policy validator
+      #   run: pip install tf-policy-validator 
+      #   run: pip install cfn-policy-validator 
+      #   run: ada credentials update --account=471112523049 --provider=isengard --role=Admin --once
+      - name: Run test
+        run: python -m unittest test_tf.py
