@@ -144,10 +144,10 @@ class TfpvTest(unittest.TestCase):
 
     # case 23: test_set_output: pass
     def test_set_output_WRITE_TO_FILE(self):
-        os.environ['GITHUB_OUTPUT'] = '/tmp/f1'
+        os.environ['GITHUB_OUTPUT'] = 'o1'
         val = '{"BlockingFindings": [],"NonBlockingFindings": []}'
         set_output(val)
-        res = subprocess.run(["grep", "BlockingFindings", "/tmp/f1"], check=True, capture_output=True, encoding="utf-8").stdout
-        subprocess.run(["rm", "/tmp/f1"])
+        res = subprocess.run(["grep", "BlockingFindings", "o1"], check=True, capture_output=True, encoding="utf-8").stdout
+        subprocess.run(["rm", "o1"])
         self.assertNotEqual(res.find("BlockingFindings"), -1)
 
