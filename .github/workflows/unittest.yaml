@@ -16,7 +16,9 @@ jobs:
         uses: actions/setup-python@v5.1.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Install policy validator
+      - name: Install pip
+        run: python -m pip install --upgrade pip
+      - name: Install parameterized
         run: pip install parameterized
       - name: Run test
         run: python -m unittest test_tf.py
