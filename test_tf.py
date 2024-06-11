@@ -6,7 +6,7 @@ from parameterized import parameterized
 from main import get_policy_check_type, get_required_inputs, get_optional_inputs, get_sub_command
 from main import get_treat_findings_as_non_blocking_flag, build_command, execute_command, set_output
 
-from main import CLI_POLICY_VALIDATOR, POLICY_CHECK_TYPE, VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED
+from main import CLI_POLICY_VALIDATOR, POLICY_CHECK_TYPE, VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED, CHECK_NO_PUBLIC_ACCESS
 from main import COMMON_REQUIRED_INPUTS, TREAT_FINDINGS_AS_NON_BLOCKING
 
 from unittest.mock import patch
@@ -24,7 +24,7 @@ class TfpvTest(unittest.TestCase):
         self.assertRaises(ValueError, get_policy_check_type)
 
     # case 3, 4, 5: test_get_type_WITH_VALIDATE_POLICY: success with valid POLICY_CHECK_TYPE
-    @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED])
+    @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED, CHECK_NO_PUBLIC_ACCESS])
     def test_get_type_WITH_VALID_POLICY_CHECK(self, policy_check_type):
         os.environ[POLICY_CHECK_TYPE] = policy_check_type
         policy_type = get_policy_check_type()
@@ -37,15 +37,15 @@ class TfpvTest(unittest.TestCase):
         self.assertEqual(get_required_inputs(policy_check), "")
 
     # case 7, 8, 9: test_get_required_input_WITH_VALIDATE_POLICY: success as a valid POLICY_CHECK_TYPE is provided: VALIDATE_POLICY
-    @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED])
+    @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED, CHECK_NO_PUBLIC_ACCESS])
     def test_get_required_input_WITH_VALID_POLICY_CHECK(self, policy_check_type):
         result = get_required_inputs(policy_check_type)
-        if policy_check_type == VALIDATE_POLICY:
-            self.assertEqual(result, {"INPUT_TEMPLATE-PATH",  "INPUT_REGION"})
-        elif policy_check_type == CHECK_NO_NEW_ACCESS:
+        if policy_check_type == CHECK_NO_NEW_ACCESS:
             self.assertEqual(result, {"INPUT_TEMPLATE-PATH",  "INPUT_REGION", "INPUT_REFERENCE-POLICY",  "INPUT_REFERENCE-POLICY-TYPE"})
+        elif policy_check_type == CHECK_ACCESS_NOT_GRANTED:
+            self.assertEqual(result, {"INPUT_TEMPLATE-PATH",  "INPUT_REGION", ("INPUT_ACTIONS", "INPUT_RESOURCES")})
         else:
-            self.assertEqual(result, {"INPUT_TEMPLATE-PATH",  "INPUT_REGION", "INPUT_ACTIONS"})
+            self.assertEqual(result, {"INPUT_TEMPLATE-PATH",  "INPUT_REGION"})
 
     # case 10: test_get_optional_input_INVALID_POLICY_CHECK: failure expected because an invalid policy_check_type is provided
     @unittest.expectedFailure
@@ -55,14 +55,12 @@ class TfpvTest(unittest.TestCase):
         assertEqual(result, {"INPUT_IGNORE-FINDING",  "INPUT_ALLOW-DYNAMIC-REF-WITHOUT-VERSION",  "INPUT_EXCLUDE-RESOURCE-TYPES"})
 
     # case 11, 12, 13: test_get_optional_input_WITH_VALID_POLICY_CHECK: success as a valid POLICY_CHECK_TYPE is provided
-    @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED])
+    @parameterized.expand([VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED, CHECK_NO_NEW_ACCESS])
     def test_get_optional_input_WITH_VALID_POLICY_CHECK(self, policy_check_type):
         result = get_optional_inputs(policy_check_type)
         if policy_check_type == VALIDATE_POLICY:
             self.assertEqual(result, {"INPUT_ALLOW-EXTERNAL-PRINCIPALS",  "INPUT_TREAT-FINDING-TYPE-AS-BLOCKING", "INPUT_IGNORE-FINDING",
                           "INPUT_ALLOW-DYNAMIC-REF-WITHOUT-VERSION",  "INPUT_EXCLUDE-RESOURCE-TYPES"})
-        elif policy_check_type == CHECK_NO_NEW_ACCESS:
-            self.assertEqual(result, {"INPUT_IGNORE-FINDING",  "INPUT_ALLOW-DYNAMIC-REF-WITHOUT-VERSION",  "INPUT_EXCLUDE-RESOURCE-TYPES"})
         else:
             self.assertEqual(result, {"INPUT_IGNORE-FINDING",  "INPUT_ALLOW-DYNAMIC-REF-WITHOUT-VERSION",  "INPUT_EXCLUDE-RESOURCE-TYPES"})
 

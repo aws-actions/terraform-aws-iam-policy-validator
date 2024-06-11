@@ -20,21 +20,24 @@ See [action.yml](action.yaml) for the full documentation for this action's input
             <th style="text-align: center;">VALIDATE_POLICY</th>
             <th style="text-align: center;">CHECK_NO_NEW_ACCESS</th>
             <th style="text-align: center;">CHECK_ACCESS_NOT_GRANTED</th>
+            <th style="text-align: center;">CHECK_NO_PUBLIC_ACCESS</th>
          </tr>
          <tr>
             <td>policy-check-type</td>
-            <td>Name of the policy check.<br />Note: Each value corresponds to an IAM Access Analyzer API. <br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ValidatePolicy.html">ValidatePolicy</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoNewAccess.html">CheckNoNewAccess</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckAccessNotGranted.html">CheckAccessNotGranted</a></td>
-            <td>VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED.</td>
+            <td>Name of the policy check.<br />Note: Each value corresponds to an IAM Access Analyzer API. <br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ValidatePolicy.html">ValidatePolicy</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoNewAccess.html">CheckNoNewAccess</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckAccessNotGranted.html">CheckAccessNotGranted</a><br />- <a href="https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_CheckNoPublicAccess.html">CheckNoPublicAccess</a></td>
+            <td>VALIDATE_POLICY, CHECK_NO_NEW_ACCESS, CHECK_ACCESS_NOT_GRANTED, CHECK_NO_PUBLIC_ACCESS.</td>
             <td>Yes</td>
+            <td>✅</td>
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
          </tr>
          <tr>
             <td>template-path</td>
-            <td>The path to the Terraform template.</td>
+            <td>The path to the CloudFormation template.</td>
             <td>FILE_PATH.json</td>
             <td>Yes</td>
+            <td>✅</td>
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
@@ -47,6 +50,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
+            <td>✅</td>
          </tr>
          <tr>
             <td>ignore-finding</td>
@@ -56,30 +60,46 @@ See [action.yml](action.yaml) for the full documentation for this action's input
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
+            <td>✅</td>
          </tr>
          <tr>
             <td>actions</td>
-            <td>List of comma-separated actions. Example format - ACTION,ACTION,ACTION. <br /><br /><strong>This attribute is only considered and required when policy-check-type is "CHECK_ACCESS_NOT_GRANTED".</strong></td>
+            <td>List of comma-separated actions. Example format - ACTION,ACTION,ACTION. <br /><br /><strong>This attribute is only considered when policy-check-type is "CHECK_ACCESS_NOT_GRANTED". At least one of "actions" or "resources" must be provided</strong></td>
             <td>ACTION,ACTION,ACTION</td>
             <td>No</td>
             <td>❌</td>
             <td>❌</td>
             <td>✅</td>
+            <td>❌</td>
+         </tr>
+         <tr>
+            <td>resources</td>
+            <td>List of comma-separated resource ARNs. Example format - RESOURCE,RESOURCE,RESOURCE. <br /><br /><strong>This attribute is only considered when policy-check-type is "CHECK_ACCESS_NOT_GRANTED". At least one of "actions" or "resources" must be provided</strong></td>
+            <td>RESOURCE,RESOURCE,RESOURCE</td>
+            <td>No</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>✅</td>
+            <td>❌</td>
          </tr>
          <tr>
             <td>reference-policy</td>
             <td>A JSON formatted file that specifies the path to the reference policy that is used for a permissions comparison. <br /><br /><strong>This attribute is only considered and required when policy-check-type is "CHECK_NO_NEW_ACCESS".</strong></td>
+            <td>FILE_PATH.json</td>
             <td>No</td>
             <td>❌</td>
             <td>✅</td>
+            <td>❌</td>
             <td>❌</td>
          </tr>
          <tr>
             <td>reference-policy-type</td>
             <td>The policy type associated with the IAM policy under analysis and the reference policy. Valid values: IDENTITY, RESOURCE. <br /><br /><strong> This attribute is only considered and required when policy-check-type is "CHECK_NO_NEW_ACCESS"</strong></td>
+            <td>REFERENCE_POLICY_TYPE</td>
             <td>No</td>
             <td>❌</td>
             <td>✅</td>
+            <td>❌</td>
             <td>❌</td>
          </tr>
          <tr>
@@ -90,12 +110,15 @@ See [action.yml](action.yaml) for the full documentation for this action's input
             <td>✅</td>
             <td>❌</td>
             <td>❌</td>
+            <td>❌</td>
          </tr>
          <tr>
             <td>treat-findings-as-non-blocking</td>
-            <td>By default, the tool will exit with a non-zero exit code when it detects any findings. Set this flag to exit with an exit code of 0 when it detects findings. You can use this to run new checks in a shadow or log only mode before enforcing them. <br /><br /><strong>This attribute is considered only when policy-check-type is "CHECK_NO_NEW_ACCESS" or "CHECK_ACCESS_NOT_GRANTED".</strong></td>
+            <td>By default, the tool will exit with a non-zero exit code when it detects any findings. Set this flag to exit with an exit code of 0 when it detects findings. You can use this to run new checks in a shadow or log only mode before enforcing them. <br /><br /><strong>This attribute is considered only when policy-check-type is "CHECK_NO_NEW_ACCESS", "CHECK_ACCESS_NOT_GRANTED", or "CHECK_NO_PUBLIC_ACCESS.</strong></td>
+            <td> </td>
             <td>No</td>
             <td>❌</td>
+            <td>✅</td>
             <td>✅</td>
             <td>✅</td>
          </tr>
@@ -107,11 +130,14 @@ See [action.yml](action.yaml) for the full documentation for this action's input
             <td>✅</td>
             <td>❌</td>
             <td>❌</td>
+            <td>❌</td>
          </tr>
          <tr>
             <td>allow-dynamic-ref-without-version</td>
             <td>Override the default behavior and allow dynamic SSM references without version numbers. The version number ensures that the SSM parameter value that was validated is the one that is deployed.</td>
+            <td> </td>
             <td>No</td>
+            <td>✅</td>
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
@@ -121,6 +147,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
             <td>List of comma-separated resource types. Resource types should be the same as Cloudformation template resource names such as AWS::IAM::Role, AWS::S3::Bucket. Valid option syntax: AWS::SERVICE::RESOURCE.</td>
             <td>AWS::SERVICE::RESOURCE, AWS::SERVICE::RESOURCE</td>
             <td>No</td>
+            <td>✅</td>
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
@@ -135,7 +162,7 @@ See [action.yml](action.yaml) for the full documentation for this action's input
 
 - Setting up the role: Role used in the GitHub workflow should have necessary permissions required
   - to be called from the GitHub workflows - setup OpenID Connect(OIDC) provider and IAM role & Trust policy as described in step 1 & 2 in [this](https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/) blog
-  - to call the AWS APIs for the policy checks - ValidatePolicy, CheckNoNewAccess, CheckAccessNotGranted. Refer [this](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-checks-validating-policies.html) page for more details
+  - to call the AWS APIs for the policy checks - ValidatePolicy, CheckNoNewAccess, CheckAccessNotGranted, CheckNoPublicAccess. Refer [this](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-checks-validating-policies.html) page for more details
 
 ```
     - name: Checkout Repo
@@ -143,10 +170,9 @@ See [action.yml](action.yaml) for the full documentation for this action's input
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.POLICY_VALIDATOR_ROLE }} # Role with permissions to invoke access-analyzer:ValidatePolicy,access-analyzer:CheckNoNewAccess, access-analyzer:CheckAccessNotGranted
+          role-to-assume: ${{ secrets.POLICY_VALIDATOR_ROLE }} # Role with permissions to invoke access-analyzer:ValidatePolicy,access-analyzer:CheckNoNewAccess, access-analyzer:CheckAccessNotGranted, access-analyzer:CheckNoPublicAccess
           aws-region: aws-example-region
 ```
-
 #### Getting started using starter workflows 
 
 To get started quickly, add a starter workflow to the `.github/workflows` directory of your repository. In order to do that, do the following -
@@ -191,13 +217,26 @@ Please find the starter workflow [here](https://github.com/actions/starter-workf
 #### Using for the `CHECK_ACCESS_NOT_GRANTED` CHECK
 
 ```
-      - name: Run CHECK_ACCESS_NOT_GRANTED check
-        id: run-check-no-new-access
+      - name: Run CHECK_ACCESS_NOT_GRANTED check 
+        id: run-check-access-not-granted
         uses: aws-actions/terraform-aws-iam-policy-validator@v1.0.1
         with:
           policy-check-type: 'CHECK_ACCESS_NOT_GRANTED'
           template-path: file-path-to-the-cfn-templates
           actions: "action1, action2.."
+          resources: "resource1, resource2.."
+          region: aws-example-region
+```
+
+#### Using for the `CHECK_NO_PUBLIC_ACCESS` CHECK
+
+```
+      - name: Run CHECK_NO_PUBLIC_ACCESS check 
+        id: run-check-no-public-access
+        uses: aws-actions/cloudformation-aws-iam-policy-validator@v1.0.1
+        with:
+          policy-check-type: 'CHECK_NO_PUBLIC_ACCESS'
+          template-path: file-path-to-the-cfn-templates
           region: aws-example-region
 ```
 

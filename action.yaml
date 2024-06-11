@@ -16,7 +16,9 @@ inputs:
   ignore-finding:
     description: 'Allow validation failures to be ignored. Specify as a comma separated list of findings to be ignored. Can be individual finding codes (e.g. "PASS_ROLE_WITH_STAR_IN_RESOURCE"), a specific resource name (e.g. "MyResource"), or a combination of both separated by a period.(e.g. "MyResource.PASS_ROLE_WITH_STAR_IN_RESOURCE"). Names of finding codes may change in IAM Access Analyzer over time. Valid options: FINDING_CODE,RESOURCE_NAME,RESOURCE_NAME.FINDING_CODE'
   actions:
-    description: 'List of comma-separated actions. Example format - ACTION,ACTION,ACTION. This attribute is considered and required when policy-check-type is "CHECK_ACCESS_NOT_GRANTED"'
+    description: 'List of comma-separated actions. Example format - ACTION,ACTION,ACTION. This attribute is considered when policy-check-type is "CHECK_ACCESS_NOT_GRANTED". At least one of "actions" or "resources" must be specified.'
+  resources:
+    description: 'List of comma-separated resource ARNs. Example format - RESOURCE,RESOURCE,RESOURCE. This attribute is considered when policy-check-type is "CHECK_ACCESS_NOT_GRANTED" At least one of "actions" or "resources" must be specified.'
   reference-policy:
     description: 'A JSON formatted file that specifies the path to the reference policy that is used for a permissions comparison. This attribute is considered and required when policy-check-type is "CHECK_NO_NEW_ACCESS"'
   reference-policy-type:
