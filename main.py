@@ -7,6 +7,7 @@ import traceback
 VALIDATE_POLICY = "VALIDATE_POLICY"
 CHECK_NO_NEW_ACCESS = "CHECK_NO_NEW_ACCESS"
 CHECK_ACCESS_NOT_GRANTED = "CHECK_ACCESS_NOT_GRANTED"
+CHECK_NO_PUBLIC_ACCESS = "CHECK_NO_PUBLIC_ACCESS"
 
 CLI_POLICY_VALIDATOR = "tf-policy-validator"
 
@@ -26,7 +27,10 @@ CHECK_NO_NEW_ACCESS_SPECIFIC_REQUIRED_INPUTS = {
     "INPUT_REFERENCE-POLICY-TYPE",
 }
 
-CHECK_ACCESS_NOT_GRANTED_SPECIFIC_REQUIRED_INPUTS = {"INPUT_ACTIONS"}
+# Use tuple to specify that at least one of the enclosed inputs is required.
+CHECK_ACCESS_NOT_GRANTED_SPECIFIC_REQUIRED_INPUTS = {("INPUT_ACTIONS", "INPUT_RESOURCES")}
+
+CHECK_NO_PUBLIC_ACCESS_SPECIFIC_REQUIRED_INPUTS = set()
 
 # excluding the "INPUT_POLICY-CHECK-TYPE". Contains only other required inputs in cfn-policy-validator
 COMMON_OPTIONAL_INPUTS = {
@@ -46,11 +50,15 @@ CHECK_NO_NEW_ACCESS_SPECIFIC_OPTIONAL_INPUTS = set()
 # Excluding the TREAT-FINDINGS-AS-NON-BLOCKING which is a flag and needs special handling
 CHECK_ACCESS_NOT_GRANTED_SPECIFIC_OPTIONAL_INPUTS = set()
 
+# Excluding the TREAT-FINDINGS-AS-NON-BLOCKING which is a flag and needs special handling
+CHECK_NO_PUBLIC_ACCESS_SPECIFIC_OPTIONAL_INPUTS = set()
+
 
 VALID_POLICY_CHECK_TYPES = [
     VALIDATE_POLICY,
     CHECK_NO_NEW_ACCESS,
     CHECK_ACCESS_NOT_GRANTED,
+    CHECK_NO_PUBLIC_ACCESS
 ]
 
 # Name of the output defined in the GitHub action schema
@@ -99,6 +107,10 @@ def get_required_inputs(policy_check):
         check_specific_required_inputs = (
             CHECK_ACCESS_NOT_GRANTED_SPECIFIC_REQUIRED_INPUTS
         )
+    elif policy_check == CHECK_NO_PUBLIC_ACCESS:
+        check_specific_required_inputs = (
+            CHECK_NO_PUBLIC_ACCESS_SPECIFIC_REQUIRED_INPUTS
+        )
     required_inputs = COMMON_REQUIRED_INPUTS.union(check_specific_required_inputs)
     return required_inputs
 
@@ -113,6 +125,10 @@ def get_optional_inputs(policy_check):
     elif policy_check == CHECK_ACCESS_NOT_GRANTED:
         check_specific_optional_inputs = (
             CHECK_ACCESS_NOT_GRANTED_SPECIFIC_OPTIONAL_INPUTS
+        )
+    elif policy_check == CHECK_NO_PUBLIC_ACCESS:
+        check_specific_optional_inputs = (
+            CHECK_NO_PUBLIC_ACCESS_SPECIFIC_OPTIONAL_INPUTS
         )
     optional_inputs = check_specific_optional_inputs.union(COMMON_OPTIONAL_INPUTS)
     return optional_inputs
@@ -147,19 +163,30 @@ def get_sub_command(inputFields, areRequiredFields):
     flags = []
 
     for input in inputFields:
-        # The default values to these environment variable when passed to docker is empty string through GitHub Actions
-        if os.environ[input] != "":
-            flag_name = get_flag_name(input)
-            flags.extend(["--{}".format(flag_name), os.environ[input]])
-        elif areRequiredFields:
-            raise ValueError("Missing value for required field: {}", input)
+        # Checking that at least one of a set of required fields is provided
+        if isinstance(input, tuple):
+            provided = False
+            for field in input:
+                if os.environ[field] != "":
+                    flag_name = get_flag_name(field)
+                    flags.extend(["--{}".format(flag_name), os.environ[field]])
+                    provided = True
+            if provided == False:
+                raise ValueError(f"Missing value for at least one of the required fields: {str(input)}")
+        else:
+            # The default values to these environment variable when passed to docker is empty string through GitHub Actions
+            if os.environ[input] != "":
+                flag_name = get_flag_name(input)
+                flags.extend(["--{}".format(flag_name), os.environ[input]])
+            elif areRequiredFields:
+                raise ValueError("Missing value for required field: {}", input)
 
     return flags
 
 
 def get_treat_findings_as_non_blocking_flag(policy_check):
     # This is specific to custom checks - CheckAccessNotGranted & CheckNoNewAccess
-    if policy_check in (CHECK_ACCESS_NOT_GRANTED, CHECK_NO_NEW_ACCESS):
+    if policy_check in (CHECK_ACCESS_NOT_GRANTED, CHECK_NO_NEW_ACCESS, CHECK_NO_PUBLIC_ACCESS):
         val = os.environ[TREAT_FINDINGS_AS_NON_BLOCKING]
         if val == "True":
             return ["--{}".format(get_flag_name(TREAT_FINDINGS_AS_NON_BLOCKING))]
